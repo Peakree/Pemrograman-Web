@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keranjang Belanja - Toko Sepatu</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            padding: 30px 40px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .content {
+            padding: 40px;
+            min-height: 400px;
+        }
+
+        .cart-items {
+            margin-bottom: 30px;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            background: #f9f9f9;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+
+        .cart-item:hover {
+            border-color: #e74c3c;
+            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.1);
+        }
+
+        .cart-item-image {
+            width: 120px;
+            height: 120px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 1px solid #e0e0e0;
+        }
+
+        .cart-item-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+        }
+
+        .cart-item-info {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .cart-item-price {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .cart-item-quantity {
+            font-size: 14px;
+            color: #999;
+            margin-bottom: 8px;
+        }
+
+        .cart-item-total {
+            font-size: 16px;
+            font-weight: 600;
+            color: #e74c3c;
+        }
+
+        .cart-item-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .qty-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 6px;
+        }
+
+        .qty-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: #e74c3c;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .qty-btn:hover {
+            background: #c0392b;
+        }
+
+        .qty-input {
+            width: 40px;
+            border: none;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .qty-input:focus {
+            outline: none;
+        }
+
+        .delete-btn {
+            padding: 8px 12px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+            font-weight: 600;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 60px 40px;
+            color: #999;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .empty-text {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .empty-subtext {
+            font-size: 14px;
+            color: #bbb;
+            margin-bottom: 30px;
+        }
+
+        .continue-shopping {
+            display: inline-block;
+            background: #e74c3c;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .continue-shopping:hover {
+            background: #c0392b;
+        }
+
+        .summary {
+            background: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .summary-row span:first-child {
+            color: #666;
+        }
+
+        .summary-row span:last-child {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #e74c3c;
+            font-size: 18px;
+            font-weight: bold;
+            color: #e74c3c;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 14px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+
+        .checkout-btn:hover {
+            background: #c0392b;
+        }
+
+        .checkout-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .cart-item {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .cart-item-image {
+                width: 100%;
+                height: 100px;
+            }
+
+            .cart-item-info {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .cart-item-actions {
+                justify-content: space-between;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .summary {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .cart-item {
+                padding: 15px;
+            }
+
+            .cart-item-name {
+                font-size: 16px;
+            }
+
+            .cart-item-image {
+                height: 80px;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .summary {
+                padding: 15px;
+            }
+
+            .delete-btn {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification.success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .notification.error {
+            background: #e74c3c;
+            color: white;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        /* Success Modal */
+        .success-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .success-modal.active {
+            display: flex;
+        }
+
+        .success-modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 40px 30px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .success-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: bounce 0.6s ease-in-out;
+        }
+
+        .success-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 12px;
+        }
+
+        .success-message {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .success-details {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .success-detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .success-detail-row:last-child {
+            margin-bottom: 0;
+            font-weight: 600;
+            color: #e74c3c;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+
+        .success-button {
+            width: 100%;
+            padding: 12px;
+            background: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .success-button:hover {
+            background: #229954;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        /* Payment Method Modal */
+        .payment-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .payment-modal.active {
+            display: flex;
+        }
+
+        .payment-modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 40px 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.4s ease;
+        }
+
+        .payment-modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .payment-modal-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .payment-modal-subtitle {
+            font-size: 14px;
+            color: #999;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .payment-method-item {
+            position: relative;
+        }
+
+        .payment-method-item input[type="radio"] {
+            display: none;
+        }
+
+        .payment-method-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 15px;
+            border: 2px solid #eee;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+            gap: 8px;
+            text-align: center;
+            min-height: 120px;
+        }
+
+        .payment-method-item input[type="radio"]:checked+.payment-method-label {
+            border-color: #e74c3c;
+            background: rgba(231, 76, 60, 0.05);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.15);
+        }
+
+        .payment-method-label:hover {
+            border-color: #e74c3c;
+            background: rgba(231, 76, 60, 0.02);
+        }
+
+        .payment-icon {
+            font-size: 32px;
+        }
+
+        .payment-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .payment-description {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .payment-summary-box {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .payment-summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .payment-summary-row:last-child {
+            margin-bottom: 0;
+            font-weight: 600;
+            color: #e74c3c;
+            font-size: 15px;
+            padding-top: 8px;
+            border-top: 1px solid #ddd;
+        }
+
+        .payment-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .payment-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .payment-btn-cancel {
+            background: #eee;
+            color: #333;
+        }
+
+        .payment-btn-cancel:hover {
+            background: #ddd;
+        }
+
+        .payment-btn-confirm {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .payment-btn-confirm:hover {
+            background: #c0392b;
+        }
+
+        .payment-btn-confirm:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive Payment Methods */
+        @media (max-width: 480px) {
+            .payment-methods {
+                grid-template-columns: 1fr;
+            }
+
+            .payment-modal-content {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛒 Keranjang Belanja</h1>
+            <a href="sepatu.html" class="back-btn">← Kembali Belanja</a>
+        </div>
+
+        <div class="content">
+            <div class="cart-items" id="cart-items"></div>
+            <div class="summary" id="summary"></div>
+        </div>
+    </div>
+
+    <!-- Payment Method Modal -->
+    <div class="payment-modal" id="payment-modal">
+        <div class="payment-modal-content">
+            <div class="payment-modal-header">
+                <div class="payment-modal-title">Pilih Metode Pembayaran</div>
+                <div class="payment-modal-subtitle">Pilih cara pembayaran yang paling mudah untuk Anda</div>
+            </div>
+
+            <div class="payment-summary-box">
+                <div class="payment-summary-row">
+                    <span>Subtotal:</span>
+                    <span id="payment-subtotal">Rp 0</span>
+                </div>
+                <div class="payment-summary-row">
+                    <span>Pajak (10%):</span>
+                    <span id="payment-tax">Rp 0</span>
+                </div>
+                <div class="payment-summary-row">
+                    <span>Total Bayar:</span>
+                    <span id="payment-total">Rp 0</span>
+                </div>
+            </div>
+
+            <div class="payment-methods">
+                <div class="payment-method-item">
+                    <input type="radio" id="payment-transfer" name="payment-method" value="transfer" checked>
+                    <label for="payment-transfer" class="payment-method-label">
+                        <div class="payment-icon">🏦</div>
+                        <div class="payment-name">Transfer Bank</div>
+                        <div class="payment-description">Langsung ke rekening kami</div>
+                    </label>
+                </div>
+
+                <div class="payment-method-item">
+                    <input type="radio" id="payment-ewallet" name="payment-method" value="ewallet">
+                    <label for="payment-ewallet" class="payment-method-label">
+                        <div class="payment-icon">📱</div>
+                        <div class="payment-name">E-Wallet</div>
+                        <div class="payment-description">GCash, PayMaya, OVO, Dana</div>
+                    </label>
+                </div>
+
+                <div class="payment-method-item">
+                    <input type="radio" id="payment-credit" name="payment-method" value="credit">
+                    <label for="payment-credit" class="payment-method-label">
+                        <div class="payment-icon">💳</div>
+                        <div class="payment-name">Kartu Kredit</div>
+                        <div class="payment-description">Visa, Mastercard, Amex</div>
+                    </label>
+                </div>
+
+                <div class="payment-method-item">
+                    <input type="radio" id="payment-installment" name="payment-method" value="installment">
+                    <label for="payment-installment" class="payment-method-label">
+                        <div class="payment-icon">📅</div>
+                        <div class="payment-name">Cicilan</div>
+                        <div class="payment-description">Cicilan 3/6/12 bulan</div>
+                    </label>
+                </div>
+
+                <div class="payment-method-item">
+                    <input type="radio" id="payment-qris" name="payment-method" value="qris">
+                    <label for="payment-qris" class="payment-method-label">
+                        <div class="payment-icon">⬛</div>
+                        <div class="payment-name">QRIS</div>
+                        <div class="payment-description">Scan barcode pembayaran</div>
+                    </label>
+                </div>
+
+                <div class="payment-method-item">
+                    <input type="radio" id="payment-cod" name="payment-method" value="cod">
+                    <label for="payment-cod" class="payment-method-label">
+                        <div class="payment-icon">🚚</div>
+                        <div class="payment-name">Bayar di Tempat</div>
+                        <div class="payment-description">Bayar saat barang tiba</div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="payment-actions">
+                <button class="payment-btn payment-btn-cancel" onclick="cancelPayment()">Batal</button>
+                <button class="payment-btn payment-btn-confirm" onclick="confirmPayment()">Lanjutkan Pembayaran</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="success-modal" id="success-modal">
+        <div class="success-modal-content">
+            <div class="success-icon">✓</div>
+            <div class="success-title">Pesanan Selesai!</div>
+            <div class="success-message" id="success-message">Terima kasih telah berbelanja. Pesanan Anda telah berhasil
+                diproses.</div>
+            <div class="success-details" id="success-details"></div>
+            <button class="success-button" onclick="continueShoppingFromModal()">Belanja Lagi</button>
+        </div>
+    </div>
+
+    <script>
+        // Load cart dari localStorage
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let selectedPaymentMethod = 'transfer';
+
+        // Render cart items
+        function renderCart() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const summaryContainer = document.getElementById('summary');
+
+            if (cart.length === 0) {
+                // Cart kosong
+                cartItemsContainer.innerHTML = `
+                    <div class="empty-message">
+                        <div class="empty-icon">🛒</div>
+                        <div class="empty-text">Keranjang Anda masih kosong</div>
+                        <div class="empty-subtext">woi belanja woi!</div>
+                        <a href="sepatu.html" class="continue-shopping">Lanjut Belanja</a>
+                    </div>
+                `;
+                summaryContainer.style.display = 'none';
+                return;
+            }
+
+            // Render cart items
+            let html = '';
+            cart.forEach((item, index) => {
+                const itemTotal = item.price * item.quantity;
+                html += `
+                    <div class="cart-item">
+                        <div class="cart-item-image">
+                            <img src="${item.image}" alt="${item.name}">
+                        </div>
+                        <div class="cart-item-info">
+                            <div class="cart-item-details">
+                                <div class="cart-item-name">${item.name}</div>
+                                <div class="cart-item-price">Rp ${item.price.toLocaleString('id-ID')}</div>
+                                <div class="cart-item-quantity">Jumlah: <strong>${item.quantity}</strong></div>
+                                <div class="cart-item-total">Total: Rp ${itemTotal.toLocaleString('id-ID')}</div>
+                            </div>
+                            <div class="cart-item-actions">
+                                <div class="qty-control">
+                                    <button class="qty-btn" data-index="${index}" data-action="decrease">−</button>
+                                    <input type="number" class="qty-input" value="${item.quantity}" data-index="${index}" readonly>
+                                    <button class="qty-btn" data-index="${index}" data-action="increase">+</button>
+                                </div>
+                                <button class="delete-btn" data-index="${index}" data-action="delete">🗑 Hapus</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            cartItemsContainer.innerHTML = html;
+
+            // Add event listeners untuk quantity controls
+            const qtyBtns = cartItemsContainer.querySelectorAll('.qty-btn');
+            qtyBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    const action = this.getAttribute('data-action');
+
+                    if (action === 'increase') {
+                        cart[index].quantity += 1;
+                    } else if (action === 'decrease' && cart[index].quantity > 1) {
+                        cart[index].quantity -= 1;
+                    }
+
+                    localStorage.setItem('cart', JSON.stringify(cart));
+                    renderCart();
+                });
+            });
+
+            // Add event listeners untuk delete buttons
+            const deleteBtns = cartItemsContainer.querySelectorAll('.delete-btn');
+            deleteBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    const itemName = cart[index].name;
+
+                    cart.splice(index, 1);
+                    localStorage.setItem('cart', JSON.stringify(cart));
+
+                    showNotification(`${itemName} dihapus dari keranjang`, 'success');
+                    renderCart();
+                });
+            });
+
+            // Calculate and render summary
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const tax = Math.floor(totalPrice * 0.1);
+            const grandTotal = totalPrice + tax;
+
+            summaryContainer.innerHTML = `
+                <div class="summary-row">
+                    <span>Jumlah Item:</span>
+                    <span>${cart.reduce((sum, item) => sum + item.quantity, 0)} produk</span>
+                </div>
+                <div class="summary-row">
+                    <span>Subtotal:</span>
+                    <span>Rp ${totalPrice.toLocaleString('id-ID')}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Pajak (10%):</span>
+                    <span>Rp ${tax.toLocaleString('id-ID')}</span>
+                </div>
+                <div class="summary-total">
+                    <span>Total Bayar:</span>
+                    <span>Rp ${grandTotal.toLocaleString('id-ID')}</span>
+                </div>
+                <button class="checkout-btn" onclick="checkout()">✓ Lanjut ke Pembayaran</button>
+            `;
+
+            summaryContainer.style.display = 'block';
+        }
+
+        // Notification function
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 2000);
+        }
+
+        // Checkout function - Show payment method modal
+        function checkout() {
+            if (cart.length === 0) {
+                showNotification('Keranjang masih kosong!', 'error');
+                return;
+            }
+
+            // Calculate totals
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const tax = Math.floor(totalPrice * 0.1);
+            const grandTotal = totalPrice + tax;
+
+            // Show payment summary in modal
+            document.getElementById('payment-subtotal').textContent = `Rp ${totalPrice.toLocaleString('id-ID')}`;
+            document.getElementById('payment-tax').textContent = `Rp ${tax.toLocaleString('id-ID')}`;
+            document.getElementById('payment-total').textContent = `Rp ${grandTotal.toLocaleString('id-ID')}`;
+
+            // Show payment modal
+            const paymentModal = document.getElementById('payment-modal');
+            paymentModal.classList.add('active');
+        }
+
+        // Cancel payment
+        function cancelPayment() {
+            const paymentModal = document.getElementById('payment-modal');
+            paymentModal.classList.remove('active');
+            showNotification('Pemesanan dibatalkan', 'error');
+        }
+
+        // Confirm payment
+        function confirmPayment() {
+            const paymentMethodRadios = document.querySelectorAll('input[name="payment-method"]');
+            let selectedMethod = 'transfer';
+
+            paymentMethodRadios.forEach(radio => {
+                if (radio.checked) {
+                    selectedMethod = radio.value;
+                }
+            });
+
+            // Calculate totals
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const tax = Math.floor(totalPrice * 0.1);
+            const grandTotal = totalPrice + tax;
+            const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+            // Get payment method name
+            const paymentMethodNames = {
+                'transfer': 'Transfer Bank',
+                'ewallet': 'E-Wallet',
+                'credit': 'Kartu Kredit',
+                'installment': 'Cicilan',
+                'qris': 'QRIS',
+                'cod': 'Bayar di Tempat'
+            };
+
+            // Show order details in success modal
+            const successDetails = document.getElementById('success-details');
+            successDetails.innerHTML = `
+                <div class="success-detail-row">
+                    <span>Metode Pembayaran:</span>
+                    <span>${paymentMethodNames[selectedMethod]}</span>
+                </div>
+                <div class="success-detail-row">
+                    <span>Jumlah Item:</span>
+                    <span>${itemCount} produk</span>
+                </div>
+                <div class="success-detail-row">
+                    <span>Subtotal:</span>
+                    <span>Rp ${totalPrice.toLocaleString('id-ID')}</span>
+                </div>
+                <div class="success-detail-row">
+                    <span>Pajak (10%):</span>
+                    <span>Rp ${tax.toLocaleString('id-ID')}</span>
+                </div>
+                <div class="success-detail-row">
+                    <span>Total Bayar:</span>
+                    <span>Rp ${grandTotal.toLocaleString('id-ID')}</span>
+                </div>
+            `;
+
+            // Update success message based on payment method
+            const successMessage = document.getElementById('success-message');
+            const messageMap = {
+                'transfer': 'Silakan transfer ke rekening kami. Pesanan akan diproses setelah konfirmasi pembayaran.',
+                'ewallet': 'Silakan selesaikan pembayaran di aplikasi e-wallet Anda.',
+                'credit': 'Silakan selesaikan pembayaran dengan kartu kredit Anda.',
+                'installment': 'Terima kasih! Data cicilan Anda sedang diproses.',
+                'qris': 'Silakan scan QRIS yang telah disiapkan untuk melanjutkan pembayaran.',
+                'cod': 'Pesanan Anda akan dikirim. Siapkan uang tunai untuk pembayaran saat barang tiba.'
+            };
+            successMessage.textContent = messageMap[selectedMethod];
+
+            // Hide payment modal
+            const paymentModal = document.getElementById('payment-modal');
+            paymentModal.classList.remove('active');
+
+            // Show success modal
+            const successModal = document.getElementById('success-modal');
+            successModal.classList.add('active');
+
+            // Clear cart
+            cart = [];
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        // Continue shopping from modal
+        function continueShoppingFromModal() {
+            const modal = document.getElementById('success-modal');
+            modal.classList.remove('active');
+            window.location.href = 'sepatu.html';
+        }
+
+        // Render cart on page load
+        renderCart();
+    </script>
+</body>
+
+</html>
